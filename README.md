@@ -2,6 +2,8 @@
 
 A simple mobile application built with Flutter to manage Student Study Plans (Kartu Rencana Studi / KRS). This project was created to fulfill the Week 4 — State Management & Data Passing assignment for the Mobile Application Development course.
 
+---
+
 ## Features
 
 1. Splash Screen: Welcome screen with a 3-second timer.
@@ -19,11 +21,7 @@ A simple mobile application built with Flutter to manage Student Study Plans (Ka
    - Displays the final list of selected courses and total credits.
    - Demonstrates Data Passing between screens using Constructors.
 
-## Tech Stack
-
-- Framework: Flutter
-- Language: Dart
-- Architecture: MVC Pattern (Model-View-Controller) adapted for beginners.
+---
 
 ## Project Structure
 
@@ -37,15 +35,56 @@ lib/
     ├── krs_screen.dart     # [Stateful] KRS Logic (Add/Remove Courses)
     └── krs_detail_screen.dart # [Stateless] Summary Result
 
-## Week 4 Assignment Checklist
+# Case Study Answers: Flutter State Management
 
-- [x] State Management: Converted KRS Screen to StatefulWidget.
-- [x] UI Updates: Used setState() to update "Total SKS" dynamically.
-- [x] Data Passing: Passed totalSks and selectedCourses list to the Summary Screen via Constructor.
-- [x] Validation: Added logic to prevent negative SKS values.
-- [x] Course Selection: Users can select course names and credit values.
+This document contains technical explanations regarding `StatelessWidget`, `StatefulWidget`, and basic state management.
 
 ---
+
+## 1. Why can’t `StatelessWidget` use `setState()`?
+
+**Answer:**
+Because `StatelessWidget` is designed to be **Immutable**.
+* It does not have a companion `State` object to track data changes.
+* Its only job is to render the UI **once** upon initialization based on the data it receives.
+* To update the UI, the widget must be destroyed and completely rebuilt by its parent, rather than updated internally.
+
+---
+
+## 2. What happens if `setState()` is removed from the button?
+
+**Answer:**
+* **Data Changes:** The underlying variable still updates (e.g., the `counter` value increases).
+* **UI Stagnates:** The screen display will **not** update.
+* **Cause:** Without `setState()`, Flutter does not receive the "dirty" signal required to re-run the `build()` method. Consequently, the screen looks "stuck" on the old data.
+
+---
+
+## 3. Why is `KrsDetailScreen` better as a `StatelessWidget`?
+
+**Answer:**
+* **Read-Only Nature:** Detail screens usually only display static data passed from the previous screen (like Course Name, Credits).
+* **No Interaction:** Direct data editing rarely happens on this specific screen.
+* **Performance:** Using `StatelessWidget` is more memory and CPU efficient because it doesn't need to maintain a complex `State` lifecycle.
+
+---
+
+## 4. What kind of data should NOT be stored as state?
+
+**Answer:**
+Avoid storing the following types of data inside `setState`:
+
+1.  **Derived Data:**
+    * Data that depends on other variables for its calculation.
+    * *Example:* Do not store `totalPrice`. Instead, calculate `price * quantity` directly inside the `build` method.
+2.  **Static Data:**
+    * Configuration that never changes while the app is running.
+    * *Example:* App Title, fixed Theme Colors.
+3.  **Temporary Logic Data:**
+    * Variables used only for internal calculations that have no visual impact.
+    * *Example:* Loop iterators (`i`), backend log timers.
+    
+---    
 
 ## Reflection (Week 4)
 
@@ -78,7 +117,7 @@ StatefulWidget:
 ## How to Run
 
 1. Clone this repository:
-   git clone https://github.com/yourusername/krs-flutter-week4.git
+   git clone https://github.com/firmanchrstn/krs-flutter-week4.git
 
 2. Install dependencies:
    flutter pub get
