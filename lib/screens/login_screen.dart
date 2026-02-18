@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dashboard_screen.dart';
+import 'profile_screen.dart'; // Digunakan untuk referensi pengiriman data nantinya jika diperlukan
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -9,59 +10,59 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  // Controllers untuk Sign Up & Login
+  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _otpController = TextEditingController();
-  final List<String> _registeredEmails = ['admin@gmail.com']; 
-  bool _isSignUpMode = false; 
-  bool _isOtpSent = false;    
-  final String _mockOtp = "1234"; 
-  void _handleSignUp() {
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
+
+  bool _isSignUpMode = false;
+  String _registeredName = "Firman Christian Purba"; // Nama default
+
+  void _handleAuth() {
     String email = _emailController.text.trim();
+    String password = _passwordController.text.trim();
 
-    if (email.isEmpty || !email.contains("@gmail.com")) {
-      _showMessage("Please enter a valid Gmail address", Colors.red);
-      return;
-    }
+    if (_isSignUpMode) {
+      // Logika Sign Up
+      String name = _nameController.text.trim();
+      String confirmPassword = _confirmPasswordController.text.trim();
 
-    if (_registeredEmails.contains(email)) {
-      _showMessage("Email is already registered. Please Sign In.", Colors.orange);
-    } else {
+      if (name.isEmpty || email.isEmpty || password.isEmpty) {
+        _showMessage("Semua field harus diisi", Colors.red);
+        return;
+      }
+      if (password != confirmPassword) {
+        _showMessage("Password tidak cocok", Colors.red);
+        return;
+      }
+
       setState(() {
-        _registeredEmails.add(email);
-        _isSignUpMode = false; 
-        _emailController.clear(); 
+        _registeredName = name;
+        _isSignUpMode = false;
+        _clearControllers();
       });
-      _showMessage("Registration Successful! Please Sign In.", Colors.green);
-    }
-  }
-
-  void _sendVerificationCode() {
-    String email = _emailController.text.trim();
-
-    if (email.isEmpty || !email.contains("@gmail.com")) {
-      _showMessage("Please enter a valid Gmail address", Colors.red);
-      return;
-    }
-
-    if (_registeredEmails.contains(email)) {
-      setState(() {
-        _isOtpSent = true;
-      });
-      _showMessage("OTP sent to $email (Code: 1234)", Colors.green);
+      _showMessage("Registrasi Berhasil! Silakan Login", Colors.green);
     } else {
-      _showMessage("Email not registered! Please Sign Up first.", Colors.red);
-    }
-  }
-
-  void _verifyOtp() {
-    if (_otpController.text == _mockOtp) {
+      // Logika Login
+      if (email.isEmpty || password.isEmpty) {
+        _showMessage("Email dan Password harus diisi", Colors.red);
+        return;
+      }
+      
+      // Navigasi ke Dashboard
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const DashboardScreen()),
       );
-    } else {
-      _showMessage("Invalid Code. Try again.", Colors.red);
     }
+  }
+
+  void _clearControllers() {
+    _nameController.clear();
+    _emailController.clear();
+    _passwordController.clear();
+    _confirmPasswordController.clear();
   }
 
   void _showMessage(String message, Color color) {
@@ -74,105 +75,101 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isSignUpMode ? "Create Account" : "Login"),
+        title: Text(_isSignUpMode ? "Sign Up" : "Login"),
         centerTitle: true,
         backgroundColor: Colors.blue[100],
       ),
-      body: SingleChildScrollView( 
+      body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const SizedBox(height: 20),
               Icon(
-                _isSignUpMode ? Icons.person_add : Icons.lock_person, 
-                size: 80, 
-                color: Colors.blue
+                _isSignUpMode ? Icons.person_add : Icons.lock_person,
+                size: 80,
+                color: Colors.blue,
               ),
               const SizedBox(height: 30),
               
-              if (_isOtpSent) ...[
-                Text(
-                  "Enter code sent to ${_emailController.text}",
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(color: Colors.grey),
-                ),
-                const SizedBox(height: 20),
+              if (_isSignUpMode) ...[
                 TextField(
-                  controller: _otpController,
-                  keyboardType: TextInputType.number,
+                  controller: _nameController,
                   decoration: const InputDecoration(
-                    labelText: "4-Digit Code",
+                    labelText: "Name",
                     border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.password),
+                    prefixIcon: Icon(Icons.person),
                   ),
                 ),
-                const SizedBox(height: 20),
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: _verifyOtp,
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.green, foregroundColor: Colors.white),
-                    child: const Text("Verify & Enter"),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      _isOtpSent = false;
-                      _otpController.clear();
-                    });
-                  },
-                  child: const Text("Cancel / Change Email"),
-                )
-
-              ] else ...[
-                TextField(
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    labelText: _isSignUpMode ? "Register New Gmail" : "Enter Registered Gmail",
-                    border: const OutlineInputBorder(),
-                    prefixIcon: const Icon(Icons.email),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: _isSignUpMode ? _handleSignUp : _sendVerificationCode,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                    ),
-                    child: Text(_isSignUpMode ? "Sign Up Now" : "Get Verification Code"),
-                  ),
-                ),
-                
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(_isSignUpMode ? "Already have an account?" : "Don't have an account?"),
-                    TextButton(
-                      onPressed: () {
-                        setState(() {
-                          _isSignUpMode = !_isSignUpMode;
-                          _emailController.clear();
-                        });
-                      },
-                      child: Text(
-                        _isSignUpMode ? "Sign In" : "Sign Up",
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ],
-                ),
+                const SizedBox(height: 15),
               ],
+
+              TextField(
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
+                decoration: const InputDecoration(
+                  labelText: "Email",
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.email),
+                ),
+              ),
+              const SizedBox(height: 15),
+
+              TextField(
+                controller: _passwordController,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: "Password",
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.lock),
+                ),
+              ),
+              const SizedBox(height: 15),
+
+              if (_isSignUpMode) ...[
+                TextField(
+                  controller: _confirmPasswordController,
+                  obscureText: true,
+                  decoration: const InputDecoration(
+                    labelText: "Confirm Password",
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.check_circle),
+                  ),
+                ),
+                const SizedBox(height: 20),
+              ],
+
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: _handleAuth,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                  ),
+                  child: Text(_isSignUpMode ? "Sign Up Now" : "Login"),
+                ),
+              ),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(_isSignUpMode ? "Already have an account?" : "Don't have an account?"),
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        _isSignUpMode = !_isSignUpMode;
+                        _clearControllers();
+                      });
+                    },
+                    child: Text(
+                      _isSignUpMode ? "Sign In" : "Sign Up",
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
         ),

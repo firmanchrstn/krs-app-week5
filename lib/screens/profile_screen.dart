@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
-import 'krs_screen.dart'; 
+import 'krs_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+  final String userName;
+  final String userId;
+
+  const ProfileScreen({
+    super.key, 
+    this.userName = "Firman Christian Purba", 
+    this.userId = "0520230003", 
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -26,13 +33,13 @@ class ProfileScreen extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               
-              const Text(
-                "Firman Christian Purba", 
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              Text(
+                userName, // Displays the name registered during Sign Up
+                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
-              const Text(
-                "ID: 0520230003", 
-                style: TextStyle(fontSize: 16, color: Colors.grey),
+              Text(
+                "Student ID: $userId", 
+                style: const TextStyle(fontSize: 16, color: Colors.grey),
               ),
               const SizedBox(height: 40),
 
