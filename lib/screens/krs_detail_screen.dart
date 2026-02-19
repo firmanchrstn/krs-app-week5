@@ -1,61 +1,72 @@
 import 'package:flutter/material.dart';
 
 class KrsDetailScreen extends StatelessWidget {
-  final int totalSks;
-  final List<String> daftarMatkul;
-
-  const KrsDetailScreen({
-    super.key, 
-    required this.totalSks, 
-    required this.daftarMatkul
-  });
+  const KrsDetailScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Menangkap data yang dikirim dari KrsScreen
+    final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    final List<Map<String, dynamic>> selectedCourses = args['selectedCourses'];
+    final int totalSks = args['totalSks'];
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text("KRS Summary"),
-        backgroundColor: Colors.blue[100],
+        title: const Text("Ringkasan KRS"),
+        backgroundColor: Colors.blueAccent,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              "Study Plan Result",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              "Mata Kuliah yang Dipilih:",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 20),
-            
-            Card(
-              color: Colors.blue[50],
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text("Total Credits Taken:", style: TextStyle(fontSize: 18)),
-                    Text(
-                      "$totalSks Credits", 
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)
+            const Divider(),
+            Expanded(
+              child: ListView.builder(
+                itemCount: selectedCourses.length,
+                itemBuilder: (context, index) {
+                  final course = selectedCourses[index];
+                  return ListTile(
+                    leading: const Icon(Icons.check_circle, color: Colors.green),
+                    title: Text(course['name']),
+                    subtitle: Text("${course['sks']} SKS"),
+                    trailing: Text(
+                      course['isMandatory'] ? "Mandatory" : "Elective",
+                      style: const TextStyle(fontStyle: FontStyle.italic),
                     ),
-                  ],
-                ),
+                  );
+                },
               ),
             ),
-            const SizedBox(height: 20),
-            
-            const Text("Selected Courses:", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const Divider(),
-
-            if (daftarMatkul.isEmpty)
-              const Text("No courses selected yet.", style: TextStyle(fontStyle: FontStyle.italic))
-            else
-              ...daftarMatkul.map((matkul) => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 5),
-                child: Text("• $matkul", style: const TextStyle(fontSize: 16)),
-              )),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.blue.shade50,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Total Kredit:",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    "$totalSks SKS",
+                    style: const TextStyle(
+                      fontSize: 18, 
+                      fontWeight: FontWeight.bold, 
+                      color: Colors.blueAccent
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
