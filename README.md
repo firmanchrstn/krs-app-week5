@@ -23,18 +23,6 @@ A simple mobile application built with Flutter to manage Student Study Plans (Ka
 
 ---
 
-## Project Structure
-
-lib/
-├── main.dart               # Entry point & Theme configuration
-└── screens/
-    ├── splash_screen.dart  # Timer & Logo
-    ├── login_screen.dart   # Auth Logic (Sign In/Up)
-    ├── dashboard_screen.dart # Main Menu
-    ├── profile_screen.dart # User Profile (Placeholder)
-    ├── krs_screen.dart     # [Stateful] KRS Logic (Add/Remove Courses)
-    └── krs_detail_screen.dart # [Stateless] Summary Result
-
 # Case Study Answers: Flutter State Management
 
 This document contains technical explanations regarding `StatelessWidget`, `StatefulWidget`, and basic state management.
