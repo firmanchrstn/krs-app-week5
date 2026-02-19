@@ -15,7 +15,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _confirmPasswordController = TextEditingController();
 
   bool _isSignUpMode = false;
-  String _registeredName = "Firman Christian Purba";
 
   void _handleAuth() {
     String email = _emailController.text.trim();
@@ -35,7 +34,6 @@ class _LoginScreenState extends State<LoginScreen> {
       }
 
       setState(() {
-        _registeredName = name;
         _isSignUpMode = false;
         _clearControllers();
       });
