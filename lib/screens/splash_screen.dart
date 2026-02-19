@@ -13,7 +13,6 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // Logic: Tunggu 3 detik, lalu pindah ke LoginScreen
     Timer(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,

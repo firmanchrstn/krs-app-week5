@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dashboard_screen.dart';
-import 'profile_screen.dart'; // Digunakan untuk referensi pengiriman data nantinya jika diperlukan
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -10,30 +9,28 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  // Controllers untuk Sign Up & Login
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
 
   bool _isSignUpMode = false;
-  String _registeredName = "Firman Christian Purba"; // Nama default
+  String _registeredName = "Firman Christian Purba";
 
   void _handleAuth() {
     String email = _emailController.text.trim();
     String password = _passwordController.text.trim();
 
     if (_isSignUpMode) {
-      // Logika Sign Up
       String name = _nameController.text.trim();
       String confirmPassword = _confirmPasswordController.text.trim();
 
       if (name.isEmpty || email.isEmpty || password.isEmpty) {
-        _showMessage("Semua field harus diisi", Colors.red);
+        _showMessage("All fields are required", Colors.red);
         return;
       }
       if (password != confirmPassword) {
-        _showMessage("Password tidak cocok", Colors.red);
+        _showMessage("Passwords do not match", Colors.red);
         return;
       }
 
@@ -42,15 +39,13 @@ class _LoginScreenState extends State<LoginScreen> {
         _isSignUpMode = false;
         _clearControllers();
       });
-      _showMessage("Registrasi Berhasil! Silakan Login", Colors.green);
+      _showMessage("Registration Successful! Please Login", Colors.green);
     } else {
-      // Logika Login
       if (email.isEmpty || password.isEmpty) {
-        _showMessage("Email dan Password harus diisi", Colors.red);
+        _showMessage("Email and Password are required", Colors.red);
         return;
       }
       
-      // Navigasi ke Dashboard
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const DashboardScreen()),
@@ -96,7 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 TextField(
                   controller: _nameController,
                   decoration: const InputDecoration(
-                    labelText: "Name",
+                    labelText: "Full Name",
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.person),
                   ),
@@ -108,7 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
                 decoration: const InputDecoration(
-                  labelText: "Email",
+                  labelText: "Email Address",
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.email),
                 ),

@@ -17,7 +17,6 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         useMaterial3: true,
       ),
-      // App starts from SplashScreen
       home: const SplashScreen(),
     );
   }

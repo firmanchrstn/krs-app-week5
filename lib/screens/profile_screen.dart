@@ -34,7 +34,7 @@ class ProfileScreen extends StatelessWidget {
               const SizedBox(height: 20),
               
               Text(
-                userName, // Displays the name registered during Sign Up
+                userName,
                 style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
               Text(
