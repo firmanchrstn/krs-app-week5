@@ -11,64 +11,65 @@ class DashboardScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Student Dashboard"),
-        backgroundColor: Colors.blue[100],
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
-            onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const LoginScreen()),
-              );
-            },
+            onPressed: () => Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => const LoginScreen()),
+            ),
           ),
         ],
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.school, size: 80, color: Colors.blue),
-              const Text("Welcome!", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 20),
-              
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const ProfileScreen()),
-                    );
-                  },
-                  icon: const Icon(Icons.person),
-                  label: const Text("View My Profile"),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          children: [
+            const Card(
+              color: Colors.blueAccent,
+              child: ListTile(
+                leading: Icon(Icons.person, color: Colors.white, size: 40),
+                title: Text(
+                  "Hello, Firman!", 
+                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                ),
+                subtitle: Text(
+                  "Student ID: 0520230003", 
+                  style: TextStyle(color: Colors.white70),
                 ),
               ),
-              
-              const SizedBox(height: 15),
+            ),
+            const SizedBox(height: 20),
+            
+            Expanded(
+              child: GridView.count(
+                crossAxisCount: 2,
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10,
+                children: [
+                  _menuItem(context, "My Profile", Icons.account_box, Colors.green, const ProfileScreen()),
+                  _menuItem(context, "Course Selection", Icons.edit_note, Colors.orange, const KrsScreen()),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange,
-                    foregroundColor: Colors.white
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const KrsScreen()),
-                    );
-                  },
-                  icon: const Icon(Icons.book),
-                  label: const Text("Fill Study Plan (Week 4 Task)"),
-                ),
-              ),
-            ],
-          ),
+  // Helper widget to create menu buttons
+  Widget _menuItem(BuildContext context, String title, IconData icon, Color color, Widget page) {
+    return InkWell(
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => page)),
+      child: Card(
+        color: color.withOpacity(0.1),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 50, color: color),
+            const SizedBox(height: 10),
+            Text(title, style: TextStyle(fontWeight: FontWeight.bold, color: color)),
+          ],
         ),
       ),
     );

@@ -5,66 +5,49 @@ class KrsDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Retrieve data from arguments
     final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     final List<Map<String, dynamic>> selectedCourses = args['selectedCourses'];
     final int totalSks = args['totalSks'];
+    final String semester = args['semester'];
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Ringkasan KRS"),
-        backgroundColor: Colors.blueAccent,
-      ),
+      appBar: AppBar(title: const Text("KRS Summary")),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Text(
+              "Semester: $semester", 
+              style: const TextStyle(
+                fontSize: 18, 
+                fontWeight: FontWeight.bold, 
+                color: Colors.blue,
+              ),
+            ),
+            const SizedBox(height: 10),
             const Text(
-              "Mata Kuliah yang Dipilih:",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              "Selected Courses:", 
+              style: TextStyle(fontSize: 16),
             ),
             const Divider(),
             Expanded(
               child: ListView.builder(
                 itemCount: selectedCourses.length,
                 itemBuilder: (context, index) {
-                  final course = selectedCourses[index];
                   return ListTile(
                     leading: const Icon(Icons.check_circle, color: Colors.green),
-                    title: Text(course['name']),
-                    subtitle: Text("${course['sks']} SKS"),
-                    trailing: Text(
-                      course['isMandatory'] ? "Mandatory" : "Elective",
-                      style: const TextStyle(fontStyle: FontStyle.italic),
-                    ),
+                    title: Text(selectedCourses[index]['name']),
+                    trailing: Text("${selectedCourses[index]['sks']} Credits"),
                   );
                 },
               ),
             ),
             const Divider(),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.blue.shade50,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    "Total Kredit:",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    "$totalSks SKS",
-                    style: const TextStyle(
-                      fontSize: 18, 
-                      fontWeight: FontWeight.bold, 
-                      color: Colors.blueAccent
-                    ),
-                  ),
-                ],
-              ),
+            Text(
+              "Total: $totalSks Credits", 
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ],
         ),

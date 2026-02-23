@@ -13,6 +13,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+    // Navigate to LoginScreen after 3 seconds
     Timer(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
@@ -29,13 +30,13 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: const [
-            Icon(Icons.school, size: 80, color: Colors.white),
+            Icon(Icons.school, size: 100, color: Colors.white),
             SizedBox(height: 20),
             Text(
-              "KRS App",
+              "KRS MOBILE APP",
               style: TextStyle(
-                fontSize: 24,
-                color: Colors.white,
+                fontSize: 24, 
+                color: Colors.white, 
                 fontWeight: FontWeight.bold,
               ),
             ),

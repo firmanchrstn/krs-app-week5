@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'krs_detail_screen.dart'; // Pastikan import sesuai nama file
+import 'krs_detail_screen.dart';
 
 class KrsScreen extends StatefulWidget {
   const KrsScreen({super.key});
@@ -9,41 +9,40 @@ class KrsScreen extends StatefulWidget {
 }
 
 class _KrsScreenState extends State<KrsScreen> {
-  // Data mata kuliah
+  String _selectedSemester = "Odd"; 
+
+  // Course Data
   final List<Map<String, dynamic>> _courseList = [
-    {"id": 1, "name": "Pemrograman Mobile", "sks": 3, "isMandatory": true, "selected": false},
-    {"id": 2, "name": "Struktur Data", "sks": 4, "isMandatory": true, "selected": false},
-    {"id": 3, "name": "Basis Data", "sks": 3, "isMandatory": true, "selected": false},
-    {"id": 4, "name": "Kewirausahaan", "sks": 2, "isMandatory": false, "selected": false},
-    {"id": 5, "name": "Etika Profesi", "sks": 2, "isMandatory": false, "selected": false},
-    {"id": 6, "name": "Bahasa Inggris Tech", "sks": 2, "isMandatory": false, "selected": false},
-    {"id": 7, "name": "Sistem Operasi", "sks": 3, "isMandatory": true, "selected": false},
-    {"id": 8, "name": "Cloud Computing", "sks": 4, "isMandatory": false, "selected": false},
+    {"name": "Mobile Programming", "sks": 3, "selected": false},
+    {"name": "Data Structures", "sks": 4, "selected": false},
+    {"name": "Database Systems", "sks": 3, "selected": false},
+    {"name": "Entrepreneurship", "sks": 2, "selected": false},
+    {"name": "Professional Ethics", "sks": 2, "selected": false},
   ];
 
-  // Logic Bisnis: Batas SKS berdasarkan IPK (Option C)
-  double gpa = 3.5; 
-  int get maxSks => gpa >= 3.0 ? 24 : 20;
-
-  int get totalSks {
-    return _courseList
-        .where((course) => course['selected'])
-        .fold(0, (sum, item) => sum + (item['sks'] as int));
+  // Calculate total selected credits (SKS)
+  int get _totalSks {
+    int total = 0;
+    for (var course in _courseList) {
+      if (course['selected'] == true) {
+        total += course['sks'] as int;
+      }
+    }
+    return total;
   }
 
-  bool get hasMandatorySelected {
-    return _courseList.any((course) => course['selected'] && course['isMandatory']);
-  }
-
+  // --- Task 2: Implement Validation Flow & Logic ---
   void _validateAndSubmit() {
-    if (totalSks == 0) {
-      _showSnackBar("Silakan pilih minimal satu mata kuliah.", Colors.orange);
-    } else if (totalSks > maxSks) {
-      _showSnackBar("Gagal! Total SKS ($totalSks) melebihi batas maksimal $maxSks.", Colors.red);
-    } else if (!hasMandatorySelected) {
-      _showSnackBar("Gagal! Anda wajib memilih minimal satu mata kuliah Mandatory.", Colors.red);
-    } else {
-      // Navigasi ke halaman detail (Option B)
+    // Rule 1: Cannot be zero or less than 3 Credits (New Validation Rule)
+    if (_totalSks < 3) {
+      _showSnackBar("Failed! You must take at least 3 Credits.", Colors.orange);
+    } 
+    // Rule 2: Cannot exceed 24 Credits
+    else if (_totalSks > 24) {
+      _showSnackBar("Failed! Total Credits cannot exceed 24.", Colors.red);
+    } 
+    // If all validations pass, navigate to detail screen
+    else {
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -51,7 +50,8 @@ class _KrsScreenState extends State<KrsScreen> {
           settings: RouteSettings(
             arguments: {
               'selectedCourses': _courseList.where((c) => c['selected']).toList(),
-              'totalSks': totalSks,
+              'totalSks': _totalSks,
+              'semester': _selectedSemester, // Sending the new field
             },
           ),
         ),
@@ -61,59 +61,57 @@ class _KrsScreenState extends State<KrsScreen> {
 
   void _showSnackBar(String message, Color color) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: color,
-        duration: const Duration(seconds: 2),
-      ),
+      SnackBar(content: Text(message), backgroundColor: color),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Form Input KRS"),
-        backgroundColor: Colors.blueAccent,
-      ),
+      appBar: AppBar(title: const Text("KRS Input (Intermediate)")),
       body: Column(
         children: [
-          Container(
+          // UI for New Field: Semester Dropdown
+          Padding(
             padding: const EdgeInsets.all(16.0),
-            color: totalSks > maxSks ? Colors.red.shade50 : Colors.blue.shade50,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Batas Maksimal SKS ($gpa):",
-                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                ),
-                Text(
-                  "$totalSks / $maxSks",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: totalSks > maxSks ? Colors.red : Colors.blue.shade900,
-                  ),
-                ),
-              ],
+            child: DropdownButtonFormField<String>(
+              value: _selectedSemester,
+              decoration: const InputDecoration(
+                labelText: "Semester Type",
+                border: OutlineInputBorder(),
+              ),
+              items: ["Odd", "Even"].map((String value) {
+                return DropdownMenuItem(value: value, child: Text(value));
+              }).toList(),
+              onChanged: (newValue) {
+                setState(() {
+                  _selectedSemester = newValue!;
+                });
+              },
             ),
           ),
+
+          // Total Credits Info
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(15),
+            color: Colors.blue[50],
+            child: Text(
+              "Total Selected Credits: $_totalSks / 24",
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+          ),
+
+          // Course List
           Expanded(
             child: ListView.builder(
               itemCount: _courseList.length,
               itemBuilder: (context, index) {
-                final course = _courseList[index];
                 return CheckboxListTile(
-                  title: Text(course['name']),
-                  subtitle: Text(
-                    "${course['sks']} SKS | ${course['isMandatory'] ? 'Mandatory' : 'Elective'}",
-                    style: TextStyle(
-                      color: course['isMandatory'] ? Colors.blue : Colors.grey,
-                    ),
-                  ),
-                  value: course['selected'],
-                  activeColor: Colors.blueAccent,
+                  title: Text(_courseList[index]['name']),
+                  subtitle: Text("${_courseList[index]['sks']} Credits"),
+                  value: _courseList[index]['selected'],
                   onChanged: (bool? value) {
                     setState(() {
                       _courseList[index]['selected'] = value!;
@@ -123,18 +121,20 @@ class _KrsScreenState extends State<KrsScreen> {
               },
             ),
           ),
+
+          // Submit Button
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: SizedBox(
               width: double.infinity,
               height: 50,
               child: ElevatedButton(
+                onPressed: _validateAndSubmit,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueAccent,
+                  backgroundColor: Colors.blue, 
                   foregroundColor: Colors.white,
                 ),
-                onPressed: _validateAndSubmit,
-                child: const Text("SUBMIT KRS", style: TextStyle(fontSize: 16)),
+                child: const Text("SUBMIT KRS"),
               ),
             ),
           ),

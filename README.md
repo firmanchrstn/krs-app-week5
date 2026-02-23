@@ -7,27 +7,72 @@ This repository is an updated version of the KRS Application, focusing on the im
 - Major: Information Systems
 - Semester: 6
 
-## Chosen Option
-For this assignment, I have chosen **Option C: Business Logic Rule**. 
-The goal was to implement strict academic rules that govern how a student selects their courses, moving beyond basic form inputs to a functional validation system.
+---
 
-## Main Logic Implementation
+# KRS Mobile App - Intermediate Level (Option A)
 
-### 1. Credit Limit Validation (SKS)
-The system enforces a maximum limit of 24 SKS per semester. 
-- The application calculates the total SKS in real-time as the user selects or deselects courses.
-- If the total exceeds 24 SKS, the submission process is blocked.
-- UI Feedback: The SKS counter changes color to red when the limit is exceeded to warn the user before they attempt to submit.
+A student Course Selection Management (KRS) application developed using Flutter. This project represents an evolution from Basic to Intermediate level by incorporating more complex business logic and data validation.
 
-### 2. Mandatory Course Requirement
-To ensure students follow the core curriculum, the system requires at least one mandatory course to be selected.
-- Each course is categorized as either Mandatory or Elective.
-- The submission logic checks if the selection contains at least one item marked as mandatory.
-- If no mandatory course is selected, an error message is displayed via a SnackBar.
+---
 
-### 3. Submission Flow
-The `_validateAndSubmit` function acts as the gatekeeper. It uses a conditional logic flow:
-- Check if any course is selected (Total > 0).
-- Check if Total SKS is within the limit (Total <= 24).
-- Check if the Mandatory requirement is met.
-- Only when all conditions are true, the system navigates to the KRS Detail/Confirmation screen, passing the selected data as arguments.
+## Development Focus
+In this update, the development focus is directed towards two main points:
+1. Addition of academic time identity.
+2. Strict enforcement of student study load regulations.
+
+---
+
+## Task Updates (Level: Basic to Intermediate)
+
+### 1. New Field Implementation
+Added a "Semester Type" field to the KRS input form. Users are now required to select the current academic semester using a Dropdown Button.
+* **Field:** Semester Type
+* **Options:** Odd (Ganjil), Even (Genap)
+
+### 2. New Validation Rules
+Implemented dual-validation logic within the submit function to ensure data integrity before processing to the summary page.
+* **Minimum Validation:** Students must take a minimum of 3 Credits (SKS). If not met, the system displays a SnackBar warning.
+* **Maximum Validation:** Students are capped at a maximum of 24 Credits (SKS) in accordance with standard academic regulations.
+
+### 3. Updated Flowchart
+The application logic flow has been updated as follows:
+1. User enters the KRS Screen.
+2. User selects the Semester Type (New Field).
+3. User selects courses from the list via Checkboxes.
+4. User presses the Submit button.
+5. System checks if Total Credits < 3. If true, an error message is displayed.
+6. System checks if Total Credits > 24. If true, an error message is displayed.
+7. If all validations are met, the system navigates to the KRS Detail Screen, passing the semester data and the list of selected courses.
+
+---
+
+## Main Logic
+
+### State Management
+The application utilizes `setState()` to manage local data changes on a single page. This includes:
+* Updating the status of course Checkboxes.
+* Updating the selection in the Semester Dropdown.
+* Real-time automatic calculation of the total selected Credits.
+
+### Navigation and Data Flow
+Navigation between screens is handled using `Navigator.push` by leveraging `RouteSettings` to send data (arguments) as a Map. The transmitted data includes:
+* A list of courses specifically marked as 'selected: true'.
+* The integer sum of the total Credits.
+* The string value of the selected semester type.
+
+### Conditional Logic (If-Else)
+If-else logic serves as the primary gatekeeper for the validation function. This ensures that navigation to the next screen only occurs if all academic requirements (minimum and maximum Credit limits) are satisfied by the user's input.
+
+---
+
+## Validation Implementation Example
+```dart
+void validateAndSubmit() {
+  if (totalSKS < 3) {
+    showSnackBar("Minimum requirement is 3 Credits");
+  } else if (totalSKS > 24) {
+    showSnackBar("Maximum limit is 24 Credits");
+  } else {
+    navigateToDetail();
+  }
+}
