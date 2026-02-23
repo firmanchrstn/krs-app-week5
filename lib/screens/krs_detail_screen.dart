@@ -5,7 +5,6 @@ class KrsDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Menangkap data yang dikirim dari KrsScreen
     final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     final List<Map<String, dynamic>> selectedCourses = args['selectedCourses'];
     final int totalSks = args['totalSks'];

@@ -31,9 +31,8 @@ class DashboardScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Icon(Icons.school, size: 80, color: Colors.blue),
+              const Text("Welcome!", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               const SizedBox(height: 20),
-              const Text("Welcome Back!", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 30),
               
               SizedBox(
                 width: double.infinity,

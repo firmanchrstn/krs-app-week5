@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'krs_detail_screen.dart'; // Pastikan import sesuai nama file
 
 class KrsScreen extends StatefulWidget {
   const KrsScreen({super.key});
@@ -8,7 +9,7 @@ class KrsScreen extends StatefulWidget {
 }
 
 class _KrsScreenState extends State<KrsScreen> {
-  // Data mata kuliah dengan informasi SKS dan Kategori
+  // Data mata kuliah
   final List<Map<String, dynamic>> _courseList = [
     {"id": 1, "name": "Pemrograman Mobile", "sks": 3, "isMandatory": true, "selected": false},
     {"id": 2, "name": "Struktur Data", "sks": 4, "isMandatory": true, "selected": false},
@@ -20,33 +21,41 @@ class _KrsScreenState extends State<KrsScreen> {
     {"id": 8, "name": "Cloud Computing", "sks": 4, "isMandatory": false, "selected": false},
   ];
 
-  // Logic: Menghitung total SKS yang dipilih
+  // Logic Bisnis: Batas SKS berdasarkan IPK (Option C)
+  double gpa = 3.5; 
+  int get maxSks => gpa >= 3.0 ? 24 : 20;
+
   int get totalSks {
     return _courseList
         .where((course) => course['selected'])
         .fold(0, (sum, item) => sum + (item['sks'] as int));
   }
 
-  // Logic: Mengecek apakah ada mata kuliah wajib yang dipilih
   bool get hasMandatorySelected {
     return _courseList.any((course) => course['selected'] && course['isMandatory']);
   }
 
-  // Logic: Fungsi validasi saat tombol submit ditekan
   void _validateAndSubmit() {
     if (totalSks == 0) {
       _showSnackBar("Silakan pilih minimal satu mata kuliah.", Colors.orange);
-    } else if (totalSks > 24) {
-      _showSnackBar("Gagal! Total SKS ($totalSks) melebihi batas maksimal 24.", Colors.red);
+    } else if (totalSks > maxSks) {
+      _showSnackBar("Gagal! Total SKS ($totalSks) melebihi batas maksimal $maxSks.", Colors.red);
     } else if (!hasMandatorySelected) {
       _showSnackBar("Gagal! Anda wajib memilih minimal satu mata kuliah Mandatory.", Colors.red);
     } else {
-      // Jika lolos validasi, lanjut ke halaman detail/konfirmasi
-      // Sesuaikan nama route dengan main.dart Anda
-      Navigator.pushNamed(context, '/krs_detail', arguments: {
-        'selectedCourses': _courseList.where((c) => c['selected']).toList(),
-        'totalSks': totalSks,
-      });
+      // Navigasi ke halaman detail (Option B)
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const KrsDetailScreen(),
+          settings: RouteSettings(
+            arguments: {
+              'selectedCourses': _courseList.where((c) => c['selected']).toList(),
+              'totalSks': totalSks,
+            },
+          ),
+        ),
+      );
     }
   }
 
@@ -69,30 +78,27 @@ class _KrsScreenState extends State<KrsScreen> {
       ),
       body: Column(
         children: [
-          // Header Informasi SKS
           Container(
             padding: const EdgeInsets.all(16.0),
-            color: totalSks > 24 ? Colors.red.shade50 : Colors.blue.shade50,
+            color: totalSks > maxSks ? Colors.red.shade50 : Colors.blue.shade50,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  "Total SKS Dipilih:",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                Text(
+                  "Batas Maksimal SKS ($gpa):",
+                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                 ),
                 Text(
-                  "$totalSks / 24",
+                  "$totalSks / $maxSks",
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: totalSks > 24 ? Colors.red : Colors.blue.shade900,
+                    color: totalSks > maxSks ? Colors.red : Colors.blue.shade900,
                   ),
                 ),
               ],
             ),
           ),
-          
-          // Daftar Mata Kuliah
           Expanded(
             child: ListView.builder(
               itemCount: _courseList.length,
@@ -117,8 +123,6 @@ class _KrsScreenState extends State<KrsScreen> {
               },
             ),
           ),
-
-          // Tombol Submit
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: SizedBox(

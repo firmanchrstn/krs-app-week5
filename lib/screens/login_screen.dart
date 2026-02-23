@@ -101,7 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
                 decoration: const InputDecoration(
-                  labelText: "Email Address",
+                  labelText: "Email Addreses",
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.email),
                 ),
